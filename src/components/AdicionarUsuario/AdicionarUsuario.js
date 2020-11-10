@@ -1,12 +1,86 @@
-import React, { Component } from 'react'
-
+import React, { useState } from 'react'
+//useState serve para fazer o gerenciamento do state
+//use state retorna um array com duas posições 1- estado inicial(string) 2 - thispath com uma função
 import './AdicionarUsuario.css'
 
-const INITIAL_STATE = { 
-  usuario: { nome: '', sobrenome: '', email: '' } 
+//utilizando hooks
+
+function AdicionarUsuario(props){
+ 
+  const [nome, setNome] = useState('')
+  const [sobrenome, setSobrenome] = useState('')
+  const [email, setEmail] = useState('')
+
+  const onSubmitHandler = (event) => {
+    event.preventDefault()
+   
+    const usuario = { 
+      nome: nome, //como é o mesmo valor posso apenas escrever nome , sobrenome e email.
+      sobrenome: sobrenome,
+      email: email
+    }
+
+    fetch('https://reqres.in/api/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(usuario)
+    })
+      .then(resposta => resposta.json())
+      .then(dados => {
+        setNome('');
+        setSobrenome('');
+        setEmail('');
+        props.adicionarUsuario(dados)
+      })
+  }
+  return (
+    <div className="AdicionarUsuario">
+      <h2>Adicionar Usuário</h2>
+      <form onSubmit={onSubmitHandler}>
+        <div className="Linha">
+          <div className="Coluna">
+            <label>Nome</label>
+            <input
+              type="text"
+              name="nome"
+              value={nome}
+              onChange={event => setNome(event.target.value)}
+              required>
+            </input>
+          </div>
+          <div className="Coluna">
+            <label>Sobrenome</label>
+            <input
+              type="text"
+              name="sobrenome"
+              value={sobrenome}
+              onChange={event => setSobrenome(event.target.value)}
+              required>
+            </input>
+          </div>
+        </div>
+        <div className="Linha">
+          <div className="Coluna">
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              value={email}
+              onChange={event => setEmail(event.target.value)}
+              required>
+            </input>
+          </div>
+        </div>
+        <button type="submit">
+          Adicionar
+      </button>
+      </form>
+    </div>
+  )
 }
 
-class AdicionarUsuario extends Component {
+//sem utilizar hooks
+/*class AdicionarUsuario extends Component {
 
   constructor(props) {
     super(props)
@@ -85,6 +159,6 @@ class AdicionarUsuario extends Component {
       </div>
     )
   }
-}
+}*/
 
 export default AdicionarUsuario
